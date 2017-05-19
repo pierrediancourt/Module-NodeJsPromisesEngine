@@ -1,6 +1,6 @@
 {
   "name": "PromisesEngine",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A small library providing utility methods to manage promises",
   "main": "index.js",
   "dependencies": {
@@ -17,21 +17,20 @@
   },
   "author": "Pierre Diancourt <contact@pierrediancourt.fr> (http://pierrediancourt.fr)",
   "bugs": {
-    "url": "https://github.com/brentertz/scapegoat/issues"
+    "url": "https://github.com/pierrediancourt/Module-NodeJsPromisesEngine/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/brentertz/scapegoat/blob/master/LICENSE"
+      "url": "https://github.com/pierrediancourt/Module-NodeJsPromisesEngine/blob/master/LICENSE"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/brentertz/scapegoat.git"
+    "url": "git://github.com/pierrediancourt/Module-NodeJsPromisesEngine.git"
   },
   "keywords": [
-    "escape",
-    "unescape",
-    "html"
+    "promises",
+    "q"
   ]
 }
