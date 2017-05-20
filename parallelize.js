@@ -2,14 +2,14 @@ const Q = require("q");
 const retryEngine = require("./retry");
 
 //PUBLIC
-function runParallelize(actions, config){
+function runParallelize(actions, params, config){
 	if(config.ensureFullSuccess){
-		return retryEngine.runRetryAll(actions, config);
+		return retryEngine.runRetryAll(actions, params, config);
 	}else{
 		if(config.continueOnErrors){
 			var promises = []
 			for(var i = 0; i < actions.length; i++){
-				promises.push(actions[i].apply());				
+				promises.push(actions[i].apply(null, params[i]));				
 			}
 
 			return Q.allSettled(promises)
@@ -32,7 +32,7 @@ function runParallelize(actions, config){
 		}else{
 			var promises = [];
 			for(var i = 0; i < actions.length; i++){
-				promises.push(actions[i].apply());
+				promises.push(actions[i].apply(null, params[i]));
 			}
 
 			return Q.all(promises)

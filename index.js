@@ -13,7 +13,7 @@ const getConfig = require("./config");
 // run batch actions
 // => returns the results of all the completed actions as an array in actions' order
 /////
-function batch(actions, size, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null, batchDelay = null){
+function batch(actions, params, size, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null, batchDelay = null){
 	if(actions.constructor !== Array){
 		console.error("This method requires an array as first parameter");
 		return new Error("This method requires an array as first parameter");
@@ -32,7 +32,7 @@ function batch(actions, size, continueOnErrors = null, retryCount = null, delayT
 	}
 
 	var config = getConfig(retryCount, delayTime, ensureFullSuccess, batchDelay, continueOnErrors);
-	return batchEngine.runBatch(actions, size, config);
+	return batchEngine.runBatch(actions, params, size, config);
 }
 
 /////
@@ -50,14 +50,14 @@ function chain(actions, initialParam = null){
 
 
 
-function retry(actions, retryCount = null, delayTime = null, ensureFullSuccess = null){
-	if(typeof actions !== "function"){
+function retry(action, param, retryCount = null, delayTime = null, ensureFullSuccess = null){
+	if(typeof action !== "function"){
 		console.error("This method requires a function as first parameter");
 		return new Error("This method requires a function as first parameter");	
 	}
 
 	var config = getConfig(retryCount, delayTime, ensureFullSuccess);
-	return retryEngine.runRetry(actions, config);
+	return retryEngine.runRetry(action, param, config);
 }
 
 /////
@@ -65,7 +65,7 @@ function retry(actions, retryCount = null, delayTime = null, ensureFullSuccess =
 // can wait for all of them to complete (either success or failure)
 // => returns the results of all the completed actions as an array in actions' order
 /////
-function parallelize(actions, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null){
+function parallelize(actions, params, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null){
 	if(actions.constructor !== Array){
 		console.error("This method requires an array as first parameter");
 		return new Error("This method requires an array as first parameter");
@@ -79,7 +79,7 @@ function parallelize(actions, continueOnErrors = null, retryCount = null, delayT
 	}
 
 	var config = getConfig(retryCount, delayTime, ensureFullSuccess, null, continueOnErrors);
-	return parallelizeEngine.runParallelize(actions, config);
+	return parallelizeEngine.runParallelize(actions, params, config);
 }
 
 /////

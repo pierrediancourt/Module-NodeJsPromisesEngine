@@ -5,6 +5,7 @@ const expect = require("chai").expect;
 const retry = require("../retry");
 const getConfig = require("../config");
 const action = require("./actions");
+const Action = require("../action");
 
 describe("Testing of the internal functions of the promisesEngine", function() {
   this.timeout(5000); //configuring mocha test so that they can resolve in 5 sec max instead of 2 sec by default
@@ -12,9 +13,10 @@ describe("Testing of the internal functions of the promisesEngine", function() {
 
   it("Does retry all actions [with retry]", function(){
 	var actions = [action.working3, action.failingOnFirstCall, action.working1];
+	var params = [];
 
 	var config = getConfig(1, 0, true);
-  	var promiseResult = retry.runRetryAll(actions, config);
+  	var promiseResult = retry.runRetryAll(actions, params, config);
   	Q.isPromise(promiseResult).should.equal(true);
 	return promiseResult.then(function(results){
 		//console.log("results : "+results);
@@ -28,9 +30,10 @@ describe("Testing of the internal functions of the promisesEngine", function() {
 
   it("Does retry all actions [without retry]", function(){
 	var actions = [action.working3, action.working2, action.working1];
+	var params = [];
 
 	var config = getConfig(1, 0, true);
-  	var promiseResult = retry.runRetryAll(actions, config);
+  	var promiseResult = retry.runRetryAll(actions, params, config);
   	Q.isPromise(promiseResult).should.equal(true);
 	return promiseResult.then(function(results){
 		//console.log("results : "+results);
