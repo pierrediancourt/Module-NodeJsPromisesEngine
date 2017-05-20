@@ -4,6 +4,7 @@ const chainEngine = require("./chain");
 const parallelizeEngine = require("./parallelize");
 const retryEngine = require("./retry");
 const getConfig = require("./config");
+const Action = require("./action");
 
 //PRIVATE
 
@@ -13,15 +14,15 @@ const getConfig = require("./config");
 // run batch actions
 // => returns the results of all the completed actions as an array in actions' order
 /////
-function batch(actions, params, size, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null, batchDelay = null){
+function batch(actions, size, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null, batchDelay = null){
 	if(actions.constructor !== Array){
 		console.error("This method requires an array as first parameter");
 		return new Error("This method requires an array as first parameter");
 	}else{
 		for(var i = 0; i < actions.length; i++){
-			if(typeof actions[i] !== "function"){
-				console.error("This method requires a function or and array of functions as first parameter");
-				return new Error("This method requires an array of functions as first parameter");
+			if(!actions[i] instanceof Action){
+				console.error("This method requires an array of Actions as first parameter");
+				return new Error("This method requires an array of Actions as first parameter");
 			}
 		}
 	}
@@ -32,32 +33,39 @@ function batch(actions, params, size, continueOnErrors = null, retryCount = null
 	}
 
 	var config = getConfig(retryCount, delayTime, ensureFullSuccess, batchDelay, continueOnErrors);
-	return batchEngine.runBatch(actions, params, size, config);
+	return batchEngine.runBatch(actions, size, config);
 }
 
 /////
 // run actions in chain
 // => returns the result of the last completed action of the chain
 /////
-function chain(actions, initialParam = null){
+function chain(actions){
 	if(actions.constructor !== Array){
 		console.error("This method requires an array as first parameter");
 		return new Error("This method requires an array as first parameter");
+	}else{
+		for(var i = 0; i < actions.length; i++){
+			if(!actions[i] instanceof Action){
+				console.error("This method requires an array of Actions as first parameter");
+				return new Error("This method requires an array of Actions as first parameter");
+			}
+		}
 	}
 
-	return chainEngine.runChain(actions, initialParam);
+	return chainEngine.runChain(actions);
 }
 
 
 
-function retry(action, param, retryCount = null, delayTime = null, ensureFullSuccess = null){
-	if(typeof action !== "function"){
-		console.error("This method requires a function as first parameter");
-		return new Error("This method requires a function as first parameter");	
+function retry(action, retryCount = null, delayTime = null, ensureFullSuccess = null){
+	if(!action instanceof Action){
+		console.error("This method requires an array of Actions as first parameter");
+		return new Error("This method requires an array of Actions as first parameter");
 	}
 
 	var config = getConfig(retryCount, delayTime, ensureFullSuccess);
-	return retryEngine.runRetry(action, param, config);
+	return retryEngine.runRetry(action, config);
 }
 
 /////
@@ -65,21 +73,21 @@ function retry(action, param, retryCount = null, delayTime = null, ensureFullSuc
 // can wait for all of them to complete (either success or failure)
 // => returns the results of all the completed actions as an array in actions' order
 /////
-function parallelize(actions, params, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null){
+function parallelize(actions, continueOnErrors = null, retryCount = null, delayTime = null, ensureFullSuccess = null){
 	if(actions.constructor !== Array){
 		console.error("This method requires an array as first parameter");
 		return new Error("This method requires an array as first parameter");
 	}else{
 		for(var i = 0; i < actions.length; i++){
-			if(typeof actions[i] !== "function"){
-				console.error("This method requires a function or and array of functions as first parameter");
-				return new Error("This method requires an array of functions as first parameter");
+			if(!actions[i] instanceof Action){
+				console.error("This method requires an array of Actions as first parameter");
+				return new Error("This method requires an array of Actions as first parameter");
 			}
 		}
 	}
 
 	var config = getConfig(retryCount, delayTime, ensureFullSuccess, null, continueOnErrors);
-	return parallelizeEngine.runParallelize(actions, params, config);
+	return parallelizeEngine.runParallelize(actions, config);
 }
 
 /////

@@ -1,12 +1,13 @@
 const Q = require("q");
+const Action = require("./action");
 
 //PRIVATE
-function retryAllRecursion(actions, params, config)
+function retryAllRecursion(actions, config)
 {
 	var map = new Map();
 	var promises = []
 	for(var i = 0; i < actions.length; i++){
-		promises.push(actions[i].apply(null, params[i]));
+		promises.push(actions[i].getFunction().apply(null, actions[i].getParams()));
 		map.set(actions[i], null); //initialising map with action as key, will store results later instead of null
 	}
 
@@ -14,7 +15,6 @@ function retryAllRecursion(actions, params, config)
 		.then(function(results){
 
 			var failedActions = []
-			var failedParams = []
 			for(var i = 0; i < promises.length; i++){				
 				if(results[i].state === "fulfilled"){
 					//console.log("action "+i+" : fulfilled and returned value : "+results[i].value);
@@ -30,7 +30,6 @@ function retryAllRecursion(actions, params, config)
 			        //console.log("The promise threw this error : "+results[i].reason);
 
 					failedActions.push(actions[i]);
-					failedParams.push(params[i]);
 					map.set(actions[i], "rejected at attempt "+config.retryCount);
 				}
 			}
@@ -39,7 +38,7 @@ function retryAllRecursion(actions, params, config)
 				//console.log("failedActions : "+failedActions)
 			    var promise = Q.delay(config.delayTime)
 			        .then(function () {
-			            return retryAllRecursion(failedActions, failedParams, config.retryCount-1, config.delayTime*2);
+			            return retryAllRecursion(failedActions, config.retryCount-1, config.delayTime*2);
 			        });
 			    return promise.then(function(result){ //is a map
 		        	//merge maps
@@ -56,8 +55,8 @@ function retryAllRecursion(actions, params, config)
 }
 
 //PUBLIC
-function runRetry(action, param, config){
-	return action.apply(null, param)
+function runRetry(action, config){
+	return action.getFunction().apply(null, action.getParams())
 	    .then(function(d){
 	        return Q(d);
 	    })
@@ -76,11 +75,11 @@ function runRetry(action, param, config){
 		});
 }
 
-function runRetryAll(actions, params, config){
+function runRetryAll(actions, config){
 	var map = new Map();
 	var promises = []
 	for(var i = 0; i < actions.length; i++){
-		promises.push(actions[i].apply(null, params[i]));
+		promises.push(actions[i].getFunction().apply(null, actions[i].getParams()));
 		map.set(actions[i], null); //initialising map with action as key, will store results later instead of null
 	}
 
@@ -89,7 +88,6 @@ function runRetryAll(actions, params, config){
 			var finalResultsIfAllSuccessfulWithoutAnyRetry = []
 
 			var failedActions = []
-			var failedParams = []
 			for(var i = 0; i < promises.length; i++){				
 				if(results[i].state === "fulfilled"){
 					//console.log("action "+i+" : fulfilled and returned value : "+results[i].value);
@@ -99,7 +97,6 @@ function runRetryAll(actions, params, config){
 			        //console.log("The promise was rejected. Retries remaining : "+retryCount+" waiting "+delayTime+" ms before next retry.");
 			        //console.log("The promise threw this error : "+results[i].reason);
 					failedActions.push(actions[i]);
-					failedParams.push(params[i]);
 					map.set(actions[i], "rejected at attempt "+config.retryCount);
 				}
 			}
@@ -108,7 +105,7 @@ function runRetryAll(actions, params, config){
 				//console.log("failedActions : "+failedActions)
 			    var promise = Q.delay(config.delayTime)
 			        .then(function () {
-			            return retryAllRecursion(failedActions, failedParams, config.retryCount-1, config.delayTime*2);
+			            return retryAllRecursion(failedActions, config.retryCount-1, config.delayTime*2);
 			        });
 		        return promise.then(function(result){ //is a map
 		        	//merge maps
