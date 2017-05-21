@@ -14,6 +14,11 @@ Action.prototype.getParams = function() {
 	if(this._params === null){
 		return [];
 	}
+
+	if(this._params.constructor !== Array){
+		return [this._params];
+	}
+	
 	return this._params;
 };
 

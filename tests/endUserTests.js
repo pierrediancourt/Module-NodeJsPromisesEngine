@@ -92,7 +92,7 @@ describe("Testing of the public functions of the promisesEngine", function() {
 	
 	describe("Tests actions without params", function() {
 		it("Makes a batch of actions [pack of 2, no delay, no retry]", function() {
-			var actions = [new Action(action.working3, ["plop","plip"]), new Action(action.working1, ["plop"]), new Action(action.working2, ["plop"])];
+			var actions = [new Action(action.working3, ["plop","plip"]), new Action(action.working1, ["plop"]), new Action(action.working2, "plop")];
 
 			var promiseResult = promisesEngine.batch(actions, 2, true, 0, 0, false, 0);
 			Q.isPromise(promiseResult).should.equal(true);
