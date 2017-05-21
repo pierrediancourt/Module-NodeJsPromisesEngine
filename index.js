@@ -125,5 +125,6 @@ module.exports = {
 	retry : retry,
 	parallelize : parallelize,
 	chain : chain,
-	ensureCatchedErrors : ensureCatchedErrors
+	ensureCatchedErrors : ensureCatchedErrors,
+	Action : Action
 }
