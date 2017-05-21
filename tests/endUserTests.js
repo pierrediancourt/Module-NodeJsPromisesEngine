@@ -61,7 +61,7 @@ describe("Testing of the public functions of the promisesEngine", function() {
 			Q.isPromise(promiseResult).should.equal(true);
 			return promiseResult.then(function(result){
 				//console.log("result : "+result);
-				result.should.equal("working2");
+				result.should.equal("working2 with param 1");
 			});
 		});
 
@@ -89,6 +89,7 @@ describe("Testing of the public functions of the promisesEngine", function() {
 			});
 		});
 	});
+	
 	describe("Tests actions without params", function() {
 		it("Makes a batch of actions [pack of 2, no delay, no retry]", function() {
 			var actions = [new Action(action.working3, ["plop","plip"]), new Action(action.working1, ["plop"]), new Action(action.working2, ["plop"])];
@@ -99,15 +100,14 @@ describe("Testing of the public functions of the promisesEngine", function() {
 				//console.log("results : "+results);
 				results.should.be.an('array');
 				results.length.should.equal(3);
-				results[0].should.equal('working3');
-				results[1].should.equal('working1');
-				results[2].should.equal('working2');
+				results[0].should.equal('working3 with params 1&2');
+				results[1].should.equal('working1 with param 1');
+				results[2].should.equal('working2 with param 1');
 			});
 		});
 	
 	});
-//failingOnFirstCall().then(failingOnFirstCall());
-//setTimeout(function(){failingOnFirstCall()}, 5000);
+
 });
 
 
