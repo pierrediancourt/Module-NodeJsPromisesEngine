@@ -1,6 +1,6 @@
 {
   "name": "promisesengine",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A small library providing utility methods to manage promises",
   "main": "index.js",
   "dependencies": {
